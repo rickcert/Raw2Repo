@@ -1,0 +1,49 @@
+{
+  "name": "Raw2Repo",
+  "version": "0.1.0",
+  "manifest_version": 3,
+  "author": "rickhqh@foxmail.com",
+  "description": "快捷切换代码托管平台（GitHub、Gitee、GitCode、GitLab）的raw页面到repo页面的插件",
+  "icons": {
+    "16": "/assets/Raw2Repo.png",
+    "48": "/assets/Raw2Repo.png",
+    "96": "/assets/Raw2Repo.png",
+    "128": "/assets/Raw2Repo.png"
+  },
+  "action": {
+    "default_title": "Raw2Repo",
+    "default_popup": "/popup/index.html"
+  },
+  "permissions": [
+    "tabs",
+    "contextMenus",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "*://*/*"
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  },
+  "background": {
+    "service_worker": "/background/index.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://raw.githubusercontent.com/*",
+        "*://gitee.com/*/raw/*",
+        "*://raw.gitcode.com/*",
+        "*://gitlab.com/*/raw/*"
+      ],
+      "js": ["/contentScript/index.js"],
+      "run_at": "document_end"
+    }
+  ],
+
+  "web_accessible_resources": [{
+    "resources": ["contentScript/style.css"],
+    "matches": ["<all_urls>"]
+  }]
+}
