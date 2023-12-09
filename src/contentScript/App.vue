@@ -9,8 +9,12 @@ export default defineComponent({
   },
   setup() {
     const dialogVisible = ref<boolean>(false)
+    const logo="https://hnust-ticknet-swzl.oss-cn-hangzhou.aliyuncs.com/certificate/hnust/Raw2Repo.png"
     const url = ref<string>('')
     const repoURL = ref<string>('')
+    const repoName = ref<string>('')
+    const starsUrl = ref<string>('')
+    const starsList = ref<string[]>([])
     const transformRaw2Repo = (rawURL: string) => {
       // GitHub 格式匹配
       const githubRegex = /^https:\/\/raw\.githubusercontent\.com\/([^\/]+)\/([^\/]+)\/.+/;
@@ -32,14 +36,22 @@ export default defineComponent({
       // 根据匹配的结果构建新的 URL
       if (githubMatch) {
         const [, githubUser, githubRepo] = githubMatch;
+        repoName.value = `Github`;
+        starsUrl.value = `https://api.star-history.com/svg?repos=${githubUser}/${githubRepo}&type=Date`;
+        starsList.value = [`https://api.star-history.com/svg?repos=${githubUser}/${githubRepo}&type=Date`];
         return `https://github.com/${githubUser}/${githubRepo}`;
       } else if (giteeMatch) {
         const [, giteeUser, giteeRepo, giteeBranch, giteePath] = giteeMatch;
+        repoName.value = `Gitee`;
+        starsUrl.value = `https://gitee.com/${giteeUser}/${giteeRepo}/widgets/widget_card.svg?colors=4183c4,ffffff,ffffff,e3e9ed,666666,9b9b9b`;
+        starsList.value = [`https://gitee.com/${giteeUser}/${giteeRepo}/widgets/widget_card.svg?colors=4183c4,ffffff,ffffff,e3e9ed,666666,9b9b9b`];
         return `https://gitee.com/${giteeUser}/${giteeRepo}/blob/${giteeBranch}/${giteePath}`;
       } else if (gitCodeMatch) {
+        repoName.value = `GitCode`;
         const [, gitCodeUser, gitCodeRepo, gitCodeBranch, gitCodePath] = gitCodeMatch;
         return `https://gitcode.com/${gitCodeUser}/${gitCodeRepo}/blob/${gitCodeBranch}/${gitCodePath}`;
       } else if (gitlabMatch) {
+        repoName.value = `Gitlab`;
         const [, gitlabUser, gitlabRepo, gitlabBranch, gitlabPath] = gitlabMatch;
         return `https://gitlab.com/${gitlabUser}/${gitlabRepo}/-/blob/${gitlabBranch}/${gitlabPath}`;
       } else {
@@ -64,10 +76,14 @@ export default defineComponent({
     }
     return {
       repoURL,
+      repoName,
       dialogVisible,
       handleClose,
       handleOpen,
-      jump
+      jump,
+      logo,
+      starUrl: starsUrl,
+      starList: starsList
     }
   }
 })
@@ -81,12 +97,29 @@ export default defineComponent({
         v-model="dialogVisible"
         title="Raw2Repo by rick"
         width="30%"
-
         :before-close="handleClose"
-        draggable="true"
         class="el-dialog"
+        style="min-width: 300px"
+        center
     >
-      <span>是否跳转至仓库 - {{ repoURL }}</span>
+      <template #header="{titleId}">
+          <el-image :src="logo"
+                    slot = "logoImg"
+                    style="width: 50px; height: 50px"
+                    :id="titleId"
+          />
+          <h2 :id="titleId" >Raw2Repo</h2>
+      </template>
+      <div>
+        <span>是否跳转至{{ repoName }}仓库 -> {{ repoURL }}</span>
+      </div>
+      <div>
+        <el-image :src="starUrl"
+                  fit="cover"
+                  :preview-src-list="starList"
+                  slot = "starsImg"
+        />
+      </div>
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="dialogVisible = false">Cancel</el-button>
