@@ -1,7 +1,7 @@
 <div align="center">
     <h1>Raw2Repo</h1>
     <h2>By Rick</h2>
-    <img width="160" src="[https://blog.rick.icu/Raw2Repo.png](https://pic.rick.icu/Raw2Repo.png)" alt="logo">
+    <img width="160" src="https://pic.rick.icu/Raw2Repo.png" alt="logo">
 </div>
 
 
